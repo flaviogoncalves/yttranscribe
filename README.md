@@ -42,6 +42,12 @@ No build step, no Web Store, no account. About a minute.
 
 **Using it:** open any YouTube video, click the yttranscribe button, and the transcript is on your clipboard. Paste it wherever you want it summarised.
 
+<p align="center">
+  <img src="./docs/images/popup.png" alt="The yttranscribe popup: a title, a 'Copy transcript' button, and the line 'Open a YouTube video and click above.'" width="428">
+</p>
+
+That is the entire interface. One button, one status line. On success the status reads `Copied — 5,919 words.` with the track language, whether it was human-written or auto-generated, and the chapter count underneath; on failure it says which of those things went wrong, in plain language.
+
 The extension asks for three permissions — `activeTab`, `scripting`, and `clipboardWrite` — and is restricted to `https://www.youtube.com/*`. It has no server, no analytics, and no network calls other than to YouTube itself.
 
 <details>
