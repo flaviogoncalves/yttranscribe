@@ -56,7 +56,7 @@ The extension asks for three permissions — `activeTab`, `scripting`, and `clip
 - **"Manifest file is missing or unreadable"** — you selected the wrong folder in step 5. Select `extension/`, the one containing `manifest.json`.
 - **The button does nothing on a non-video page** — expected. It only acts on `youtube.com/watch` pages.
 - **"This episode has no captions"** — also expected, and not a bug. yttranscribe harvests transcripts that already exist; it never generates them. See [ADR 0002](./docs/adr/0002-harvest-only-never-transcribe.md).
-- **It stopped working after a YouTube change** — likely; this is unofficial. See [how it works](#how-yttranscribe-works) below.
+- **It stopped working after a YouTube change** — possible; this is unofficial and uses no documented API. See [Reliability](#reliability).
 - **You edited the source** — run `npm run build` and then hit the refresh icon on the extension card in `chrome://extensions`.
 
 </details>
@@ -165,13 +165,11 @@ It handles more than video — contracts, papers, proposals, meeting transcripts
 
 Output language follows your request, not the source: ask in Portuguese and an English video comes back in Portuguese, with technical terms, direct quotes and chapter titles left in the original so the anchors still match what YouTube shows you.
 
-## How yttranscribe works
+## Reliability
 
-One `POST` to `/youtubei/v1/player` identifying as the **Android client**, then a `GET` of the caption track URL it returns. That is the whole thing — about a second, no browser automation, no headless Chrome.
+This is unofficial. It uses no documented API, and it can stop working without notice if YouTube changes how captions are served. There is no server, no browser automation and no headless Chrome involved — a request goes out and a transcript comes back, typically in about a second.
 
-The client identity is the mechanism, not an implementation detail. Caption URLs minted for the `WEB` client carry `exp=xpe`, a Proof-of-Origin gate, and answer with an empty body. Android-minted URLs have no such parameter and serve normally. See [ADR 0003](./docs/adr/0003-android-client-to-reach-caption-tracks.md).
-
-This is unofficial and could break if YouTube extends the gate.
+The code is here if you want to know more: the network layer is [`src/youtube/fetchEpisode.ts`](./src/youtube/fetchEpisode.ts).
 
 ## Scope
 
@@ -197,7 +195,7 @@ npm run typecheck
 npm run build     # CLI to dist/, extension to extension/js/
 ```
 
-Pure logic is tested — timedtext parsing, track selection, chapter parsing, URL parsing, formatting. `fetchEpisode` is a thin network adapter over a third-party API that changes without notice, so it is verified by running it rather than by fixtures that would give false confidence.
+Pure logic is tested — caption parsing, track selection, chapter parsing, URL parsing, formatting. `fetchEpisode` is a thin network adapter over a third-party API that changes without notice, so it is verified by running it rather than by fixtures that would give false confidence.
 
 `extension/js/` is generated from `src/` and committed, so the extension can be loaded without a build step. Rebuild it with `npm run build` after editing `src/`.
 
