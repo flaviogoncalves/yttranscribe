@@ -87,9 +87,39 @@ The directory name must stay `signal-noise`, matching the `name:` in the frontma
 
 **claude.ai (web and desktop app)**
 
-Skills are account-level, so one upload covers both. Zip the skill folder so the archive contains `signal-noise/SKILL.md` (not a doubled `signal-noise/signal-noise/`), then go to **Settings → Skills → Add**. To update later, use **Replace** on the existing skill rather than adding a second copy.
+Skills are per-account, so one upload covers both. Zip the folder so the archive contains `signal-noise/SKILL.md` — not a doubled `signal-noise/signal-noise/` — then add it under **Settings → Skills** (documented as Settings → Features). Requires a plan with code execution enabled. To update later, use **Replace** on the existing skill rather than uploading a second copy.
 
-**Claude API** — see the [Agent Skills docs](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview).
+**Claude API**
+
+Upload through the `/v1/skills` endpoints, then reference the returned `skill_id` in the `container` parameter. Requires the [code execution tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool) and the `skills-2025-10-02` beta header. API skills are workspace-wide. Note the sandbox has no network access — irrelevant here, since `signal-noise` only reads text you paste in.
+
+> **Skills do not sync between surfaces.** Claude Code, claude.ai and the API each hold their own copy. Installing in one does nothing for the others, so update each place you actually use.
+
+### Other harnesses
+
+`SKILL.md` is Anthropic's Agent Skills format, and no other tool reads it natively. But the file is plain Markdown with a YAML header — the instructions are portable even though the packaging is not.
+
+Most other agents read [**AGENTS.md**](https://agents.md), the open standard now stewarded by the Linux Foundation and read natively by Codex, Cursor, GitHub Copilot, Gemini CLI, Aider, Windsurf, Zed, Devin, Amp and Jules, among others.
+
+**The naive port — and why not to do it.** You can paste the body of `SKILL.md` straight into `AGENTS.md` and it will work. The cost is that `AGENTS.md` is loaded on *every* turn, while a Skill loads only when triggered. This file is ~20k characters; carrying that into every request in a coding session to summarise the occasional transcript is a bad trade.
+
+**Better: keep it a file, point at it.** Copy `skills/signal-noise/` into your repo, then add a few lines to `AGENTS.md`:
+
+```markdown
+## Summarising long material
+
+When asked to summarise, condense, or extract the signal from a transcript,
+contract, paper, proposal, or long document — including the Portuguese
+"resumir" / "filtra o ruído" — read `skills/signal-noise/SKILL.md` first and
+follow it. For anything that is not video, also read
+`skills/signal-noise/references/source-types.md`.
+```
+
+That reproduces the on-demand behaviour: a few dozen tokens always resident, the full instructions pulled in only when relevant. It is the same trick the skill format uses, done by hand.
+
+Tool-specific homes, if you prefer them to `AGENTS.md`: Cursor reads `.cursor/rules/*.mdc`, Copilot reads `.github/copilot-instructions.md`, and Windsurf and Zed have their own rules files — the pointer snippet above works unchanged in any of them.
+
+**What you lose off-Claude:** automatic triggering from the `description`. Elsewhere the agent only follows the skill if your instructions file tells it to, or if you ask for it by name.
 
 ## Using them together
 
