@@ -2,6 +2,12 @@
   "name": "yttranscribe",
   "version": "0.0.0",
   "private": true,
+  "license": "MIT",
+  "author": "Flavio E Goncalves",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flaviogoncalves/yttranscribe.git"
+  },
   "type": "module",
   "scripts": {
     "test": "vitest run",
