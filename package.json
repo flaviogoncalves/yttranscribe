@@ -1,0 +1,23 @@
+{
+  "name": "yttranscribe",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run build:cli && npm run build:ext",
+    "build:cli": "tsc -p tsconfig.cli.json",
+    "build:ext": "tsc -p tsconfig.build.json",
+    "cli": "node dist/cli.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
+  },
+  "bin": {
+    "yttranscribe": "dist/cli.js"
+  }
+}

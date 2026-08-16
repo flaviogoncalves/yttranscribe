@@ -1,0 +1,176 @@
+# yttranscribe + signal-noise
+
+Turn a YouTube video into a decision about whether to watch it.
+
+Two pieces that chain together:
+
+- **`yttranscribe`** — a Chrome extension (and CLI) that puts a YouTube episode's transcript on your clipboard in about a second. It does not summarise.
+- **`signal-noise`** — a [Claude Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview) that compresses that transcript into a verdict, the facts, and a list of what to skip. It does not fetch.
+
+Each is useful alone. Together they answer one question fast: **is this worth 31 minutes, and if not, which 90 seconds are?**
+
+## The ten-second version
+
+A 31-minute Y Combinator interview, 5,919 words. Here is the whole output:
+
+> **Verdict — the summary below is the whole thing.** Every checkable claim in 31 minutes fits in
+> the next twenty lines. Seven of the twelve chapters contain no verifiable fact at all — they are
+> career advice and forecasting. 31 min → ~1 min.
+>
+> **What is new —** Stripe's internal data shows new businesses starting on Stripe running at **just
+> under 2x year-over-year**, the largest relative jump Stripe has recorded, against ~50% during COVID
+> (Feb–Apr 2020) — [25:17](https://www.youtube.com/watch?v=5d6y3poKwK4&t=1517s).
+>
+> **Skip list —** `0:00 Intro` · `0:07 What Should You Still Learn` · `5:12 Should You Drop Out` ·
+> `9:58 Why Stripe Worked` · `17:20 Is the Lean Startup Still the Right Playbook?` (speculation,
+> explicitly "I don't know") · `22:36 Will AI Kill Your Startup?` · `30:45 Build Something People Truly Need`
+
+See [`examples/`](./examples/) for [the input shape](./examples/input-transcript.md) and [the full output](./examples/output-summary.md), which was not hand-edited. The source transcript belongs to Y Combinator and is not redistributed here; one command regenerates it.
+
+Note what happened to `17:20`. It is the most quotable chapter in the video, and it is in the skip list — because the speaker says "I don't know" and offers no data. That is the entire point of the skill.
+
+## Install the extension
+
+No build step, no Web Store, no account. About a minute.
+
+1. **Download the code.** Either `git clone https://github.com/flaviogoncalves/yttranscribe.git`, or use **Code → Download ZIP** on this page and unzip it.
+2. Open Chrome and go to **`chrome://extensions`** (type it in the address bar — it is not in the menus).
+3. Turn on **Developer mode** with the toggle in the **top-right** corner. Nothing appears to happen; this just reveals the buttons in step 4.
+4. Click **Load unpacked** (top-left).
+5. In the folder picker, select the **`extension/`** folder inside the code you downloaded — **not** the top folder. You should be selecting the folder that directly contains `manifest.json`.
+6. "yttranscribe" now appears in your extension list. Click the puzzle-piece icon in the Chrome toolbar and **pin** it so the button is always visible.
+
+**Using it:** open any YouTube video, click the yttranscribe button, and the transcript is on your clipboard. Paste it wherever you want it summarised.
+
+The extension asks for three permissions — `activeTab`, `scripting`, and `clipboardWrite` — and is restricted to `https://www.youtube.com/*`. It has no server, no analytics, and no network calls other than to YouTube itself.
+
+<details>
+<summary><strong>If it does not work</strong></summary>
+
+- **"Manifest file is missing or unreadable"** — you selected the wrong folder in step 5. Select `extension/`, the one containing `manifest.json`.
+- **The button does nothing on a non-video page** — expected. It only acts on `youtube.com/watch` pages.
+- **"This episode has no captions"** — also expected, and not a bug. yttranscribe harvests transcripts that already exist; it never generates them. See [ADR 0002](./docs/adr/0002-harvest-only-never-transcribe.md).
+- **It stopped working after a YouTube change** — likely; this is unofficial. See [how it works](#how-yttranscribe-works) below.
+- **You edited the source** — run `npm run build` and then hit the refresh icon on the extension card in `chrome://extensions`.
+
+</details>
+
+## Install the CLI
+
+Optional. Same code, useful for batches and for piping into other tools.
+
+```bash
+git clone https://github.com/flaviogoncalves/yttranscribe.git
+cd yttranscribe
+npm install && npm run build
+
+# print to stdout
+node dist/cli.js "https://www.youtube.com/watch?v=5d6y3poKwK4"
+
+# write one Markdown file per episode
+node dist/cli.js <url> <url> --out ~/Documents/podcasts
+```
+
+Requires Node 18+ (developed on 22).
+
+## Install the skill
+
+`signal-noise` lives in [`skills/signal-noise/`](./skills/signal-noise/). It is two files — `SKILL.md` and `references/source-types.md` — and **both matter**: the second carries the per-type rules for contracts, papers, proposals and meetings. The skill degrades on non-video input without it.
+
+**Claude Code**
+
+```bash
+cp -r skills/signal-noise ~/.claude/skills/
+```
+
+The directory name must stay `signal-noise`, matching the `name:` in the frontmatter. It is picked up on the next invocation — no restart needed. Confirm with `/signal-noise`.
+
+**claude.ai (web and desktop app)**
+
+Skills are account-level, so one upload covers both. Zip the skill folder so the archive contains `signal-noise/SKILL.md` (not a doubled `signal-noise/signal-noise/`), then go to **Settings → Skills → Add**. To update later, use **Replace** on the existing skill rather than adding a second copy.
+
+**Claude API** — see the [Agent Skills docs](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview).
+
+## Using them together
+
+1. Open a video. Click the extension. The transcript is on your clipboard.
+2. Paste it into Claude and ask for a summary — or just paste it, since the skill triggers on its own.
+
+The transcript arrives with a header that makes the paste self-describing:
+
+```
+# Title
+**Channel:** ...
+**Duration:** 34m
+**URL:** https://...
+
+## Chapters
+- 0:00 — Intro
+- 10:29 — Startup Idea 1
+
+## Transcript
+[continuous prose, no inline timestamps]
+```
+
+That shape is what makes the summary navigable. The chapter list lets `signal-noise` anchor each claim to a real chapter and turn it into a clickable link (`10:29` → `&t=629s`), and the URL in the header is what those links are built from. No chapters means no anchors, and the skill says so rather than inventing them.
+
+## What signal-noise actually does
+
+The premise: a bad summary gets shorter by cutting content; a good one gets shorter by cutting rhetorical redundancy and keeping 100% of what carries weight.
+
+For video specifically, four rules do most of the work:
+
+- **The Verdict is a decision, not a hedge.** One of three calls — watch it all, skim these chapters, or the summary is the whole thing — chosen on fact density rather than on how good the talk was. "Worth watching in full" has to be earned by something a transcript cannot carry: a demo, a document on screen, tone that changes the meaning.
+- **Opinion is noise until it is earned.** Every claim faces one test: *could this be false, and could someone check?* Numbers, dates, mechanisms and decisions are signal. Forecasts, takes and career advice are not — unless they rest on data the speaker uniquely has, or are the speaker describing their own conduct. Cutting an opinion is fine; restating it without its hedge is not.
+- **Anchors are chapter-accurate or absent.** There are no inline timestamps in the input, so per-sentence `mm:ss` can only be guessed. Claims are matched to the chapter whose *title* names them, never to a position estimated from how far down the text sits. A link that looks exact and is wrong is worse than no link.
+- **Nothing quantitative is ever rounded away.** Numbers keep their units and context, conditionals keep their exceptions, hedges keep their hedging, and contradictions in the source are recorded rather than smoothed into a consensus that was never reached.
+
+It handles more than video — contracts, papers, proposals, meeting transcripts, threads, technical docs — each with its own definition of what counts as signal, in [`references/source-types.md`](./skills/signal-noise/references/source-types.md). The `Verdict` and `Skip list` blocks are video-only; a contract gets `Points of attention` instead.
+
+Output language follows your request, not the source: ask in Portuguese and an English video comes back in Portuguese, with technical terms, direct quotes and chapter titles left in the original so the anchors still match what YouTube shows you.
+
+## How yttranscribe works
+
+One `POST` to `/youtubei/v1/player` identifying as the **Android client**, then a `GET` of the caption track URL it returns. That is the whole thing — about a second, no browser automation, no headless Chrome.
+
+The client identity is the mechanism, not an implementation detail. Caption URLs minted for the `WEB` client carry `exp=xpe`, a Proof-of-Origin gate, and answer with an empty body. Android-minted URLs have no such parameter and serve normally. See [ADR 0003](./docs/adr/0003-android-client-to-reach-caption-tracks.md).
+
+This is unofficial and could break if YouTube extends the gate.
+
+## Scope
+
+**Does:**
+
+- Fetch the existing transcript for any YouTube video, headless, in batch
+- Prefer human-written captions in the original language; never silently hand you a translation
+- Refuse plainly when an episode has no captions
+
+**Deliberately does not:**
+
+- **Transcribe.** No speech-to-text, no audio — see [ADR 0002](./docs/adr/0002-harvest-only-never-transcribe.md). Uncaptioned episodes are refused, not guessed at.
+- **Anything but YouTube.** No Spotify, no Apple Podcasts.
+- **Summarise, in the extension.** That is `signal-noise`'s job, and keeping them separate means you can point either half at something else.
+
+The project name is a mild misnomer: it harvests transcripts and never transcribes. Kept because it is short.
+
+## Development
+
+```bash
+npm test          # 30 tests
+npm run typecheck
+npm run build     # CLI to dist/, extension to extension/js/
+```
+
+Pure logic is tested — timedtext parsing, track selection, chapter parsing, URL parsing, formatting. `fetchEpisode` is a thin network adapter over a third-party API that changes without notice, so it is verified by running it rather than by fixtures that would give false confidence.
+
+`extension/js/` is generated from `src/` and committed, so the extension can be loaded without a build step. Rebuild it with `npm run build` after editing `src/`.
+
+## Docs
+
+- [CONTEXT.md](./CONTEXT.md) — glossary
+- [docs/adr/](./docs/adr/) — decisions, including [0001](./docs/adr/0001-browser-extension-because-sabr-killed-server-side-captions.md), kept as a record of a wrong turn
+- [docs/spec/](./docs/spec/) — the original spec, now largely overtaken
+
+## License
+
+[MIT](./LICENSE)
