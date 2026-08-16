@@ -13,13 +13,18 @@ Each is useful alone. Together they answer one question fast: **is this worth 31
 
 A 31-minute Y Combinator interview, 5,919 words. Here is the whole output:
 
-> **Verdict — the summary below is the whole thing.** Every checkable claim in 31 minutes fits in
-> the next twenty lines. Seven of the twelve chapters contain no verifiable fact at all — they are
-> career advice and forecasting. 31 min → ~1 min.
+> **Verdict — the summary below is the whole thing.** One disclosure clears both gates. Everything
+> else in 31 minutes is background, career advice, or forecasting. 31 min → ~45 sec.
 >
-> **What is new —** Stripe's internal data shows new businesses starting on Stripe running at **just
-> under 2x year-over-year**, the largest relative jump Stripe has recorded, against ~50% during COVID
-> (Feb–Apr 2020) — [25:17](https://www.youtube.com/watch?v=5d6y3poKwK4&t=1517s).
+> **What is new — and what it changes.** Stripe disclosed internal data showing new businesses
+> starting on Stripe at **just under 2x year-over-year**, its largest recorded jump, against ~50%
+> during COVID — and not dilution: the *median* business is doing better and $1M/$5M/$10M
+> threshold-crossing is rising ([25:17](https://www.youtube.com/watch?v=5d6y3poKwK4&t=1517s)).
+>
+> **Which means:** anyone arguing AI is consolidating the economy into a few winners is arguing
+> against the payment rails' own numbers — and with **25% of all Delaware corporations** now
+> incorporated through Stripe Atlas, this is closer to a census of US company formation than to one
+> vendor's book.
 >
 > **Skip list —** `0:00 Intro` · `0:07 What Should You Still Learn` · `5:12 Should You Drop Out` ·
 > `9:58 Why Stripe Worked` · `17:20 Is the Lean Startup Still the Right Playbook?` (speculation,
@@ -156,6 +161,7 @@ The premise: a bad summary gets shorter by cutting content; a good one gets shor
 
 For video specifically, four rules do most of the work:
 
+- **Two gates: new AND relevant.** A claim must be something the reader could not already have known, *and* something with a consequence. New-but-inconsequential is trivia and gets cut; relevant-but-old is labelled background rather than promoted. Relevance is judged generally, never against one reader's assumed interests — the summary names *who* is affected and *what changes*, so any reader can tell in one line whether it concerns them. When nothing clears both gates, saying "nothing here is new" is the whole output, and a valuable one.
 - **The Verdict is a decision, not a hedge.** One of three calls — watch it all, skim these chapters, or the summary is the whole thing — chosen on fact density rather than on how good the talk was. "Worth watching in full" has to be earned by something a transcript cannot carry: a demo, a document on screen, tone that changes the meaning.
 - **Opinion is noise until it is earned.** Every claim faces one test: *could this be false, and could someone check?* Numbers, dates, mechanisms and decisions are signal. Forecasts, takes and career advice are not — unless they rest on data the speaker uniquely has, or are the speaker describing their own conduct. Cutting an opinion is fine; restating it without its hedge is not.
 - **Anchors are chapter-accurate or absent.** There are no inline timestamps in the input, so per-sentence `mm:ss` can only be guessed. Claims are matched to the chapter whose *title* names them, never to a position estimated from how far down the text sits. A link that looks exact and is wrong is worse than no link.

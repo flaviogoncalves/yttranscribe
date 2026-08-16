@@ -67,6 +67,31 @@ Everything else goes: forecasts about the industry, takes on whether to attend c
 
 For video, `## Thesis` therefore holds the **factual centre** of the material — what it establishes — not the speaker's worldview. When the speaker's interpretation is worth recording at all, it goes in one line inside `## Signal`, explicitly attributed ("Collison's read, no data offered:"), never as a headline block. A summary whose most prominent claim is something nobody can check has inverted the hierarchy.
 
+### New and relevant are two separate gates
+
+Checkability decides whether a claim is a fact. Two further gates decide whether that fact is worth the reader's attention, and **a claim must pass both**. This is the heart of the skill: the reader is not asking "what was said", they are asking **what is new, and why does it matter to me**.
+
+**Gate 1 — is it new?** Judge against a reader who follows this subject but has not seen this specific item. Not new: background any practitioner has, the definition of a term, a well-known event recounted, a statistic that has circulated for a year. New: a number released here, a mechanism explained for the first time, a decision or launch being disclosed, a figure only this speaker has access to.
+
+Beware the format's favourite move: presenting the long-known as revelation. Framing something as surprising does not make it new. Ask when the reader could first have known this — if the answer is "years ago", it is background, and background belongs in a subordinate clause or nowhere.
+
+**Gate 2 — is it relevant?** Relevance is consequence: something changes because this is true. A fact with no consequence is trivia, however new and however verified. The test is to try to write the "so what" clause — if you cannot finish *"which means…"* without inventing something the source does not support, the fact does not clear the gate.
+
+Do not judge this against one reader's interests. You do not know who is reading, and guessing produces a summary that is wrong for everyone else. Judge it generally, and make the summary self-selecting instead: **name who is affected and what changes for them.** "Stripe's signup data is up 2x — which means founders raising on 'the market is frozen' are arguing against the payment rails' own numbers" tells every reader in one line whether this concerns them. "Interesting data on startup formation" tells nobody anything.
+
+Two rules keep this honest. Take the consequence from the material wherever the material states one, and never manufacture a consequence the source does not claim — an invented "so what" is the most damaging thing this skill could produce, because it reads as analysis. And where the source states a consequence for a narrow group, say which group rather than inflating it into a general claim.
+
+If the user has stated a context of their own, that is an additional filter to apply on top — never a replacement for the general test.
+
+**What each combination means:**
+
+- **New and relevant** — this is the summary. It goes in `## What is new`, first.
+- **Relevant but not new** — the reader already knows it. Compress hard or cut; never lead with it.
+- **New but not relevant** — trivia. Cut, unless the whole material is trivia, in which case say that.
+- **Neither** — noise, by definition.
+
+**Say so when nothing is new.** A great deal of material contains no new fact and is a competent re-arrangement of known ones. Reporting that plainly — "nothing here is new; it restates X and Y, well" — is one of the most valuable outputs this skill produces, because it returns the reader's time immediately. It is a finding, not a failure, and it must never be padded into looking like a discovery.
+
 ## Step 1: Classify the source before compressing
 
 What counts as "signal" changes with the type of material. For video and podcast, use the primary path above. For everything else, identify the type and read the matching section in `references/source-types.md` before writing:
@@ -134,19 +159,32 @@ Use this structure, adapting the blocks that do not apply (empty blocks should b
 below is the whole thing". Add the trade: original duration versus read time.
 This is the block the user came for. Do not hedge it.
 
-Decide it on fact density, not on how interesting the talk was. Count the checkable
-claims: if they all fit in the summary, the call is "the summary below is the whole
-thing" — which is the honest verdict for most videos, and the one to reach for by
-default. "Worth watching in full" requires a reason the transcript cannot carry:
-a demo, a document shown on screen, tone that changes the meaning. Never award it
-for a talk that was merely well delivered.]
+Decide it on how much clears both gates — new AND relevant — not on how interesting
+the talk was. If everything that clears them fits in the summary, the call is "the
+summary below is the whole thing", which is the honest verdict for most videos and
+the one to reach for by default. If nothing clears them, say so outright: "nothing
+new here" is a complete and valuable verdict. "Worth watching in full" requires a
+reason the transcript cannot carry — a demo, a document shown on screen, tone that
+changes the meaning — and is never awarded for a talk that was merely well delivered.]
 
-## What is new
-[1 to 2 sentences, written BEFORE anything else. Only the verifiable fact:
-who did what, by what mechanism, and what becomes possible that was not before.
-If the material contains no new fact and is only interpretation of known facts,
-write exactly that and move on. Omit this block for operational material
-(contract, proposal, minutes, report), where the Thesis already covers it.]
+## What is new — and what it changes
+[THE most important block. Compose it before anything else, and cut everything
+that does not survive next to it. Two to four sentences, carrying two things:
+
+  1. The new, checkable fact — who did what, by what mechanism, with the numbers.
+  2. The consequence — who is affected and what changes for them. State it
+     generally so any reader can tell whether it concerns them. Take it from the
+     material; never invent one.
+
+Both gates must be passed: new AND relevant. Old-but-relevant is background and
+belongs lower. New-but-inconsequential is trivia and gets cut.
+
+If nothing clears both gates, say exactly that in one line — "nothing here is new;
+it restates X and Y" — and stop. That is a finding and it is often the most useful
+output this skill produces. Do not pad it into looking like a discovery.
+
+Omit this block only for operational material (contract, proposal, minutes,
+report), where "What this is" already covers it.]
 
 ## Thesis
 [1-3 sentences. What this material claims, at bottom. For an operational rather
@@ -166,22 +204,15 @@ carries a fact, a number, a condition, or a commitment. No connective sentences.
 For video, anchor each claim to its chapter: (10:29 Startup Idea 1).]
 
 ## Skip list
-[Video and podcast only. Chapters that carry NOTHING — not chapters that carry
-little. The test is binary: if you cited even one fact from a chapter, it does not
-belong here, no matter how thin the rest of it was. A chapter listed as skippable
-that the Signal block quotes from tells the user the summary is not reading its own
-output. Timestamp, title, three words on why. Omit the block when every chapter
-earns its place. Partial chapters are handled by the Verdict, which names what to
-watch; silence about a chapter already means "nothing worth your time here".]
+[Video and podcast only. Timestamp, title, three words on why. Binary test: cite
+one fact from a chapter and it cannot be listed here. Omit when every chapter earns
+its place.]
 
 ## Numbers and commitments
-[Only when present, and only for what is NOT already stated in the body. This is an
-index for recovery, not a second pass over the same facts: a table that restates the
-Signal block reintroduces exactly the redundancy this skill removes. Two legitimate
-uses: numbers scattered across many chapters that are worth seeing side by side
-(a series, a trend, a set of thresholds), and commitments with an owner or deadline
-that must survive as a checklist. If every number already sits in the body with its
-context, omit this block — do not duplicate it for the sake of having a table.]
+[Only for what is NOT already in the body — this is an index for recovery, not a
+second pass. Legitimate uses: a series or set of thresholds worth seeing side by
+side, and commitments with an owner or deadline. If every number already sits in
+the body with its context, omit the block.]
 
 ## Tensions and gaps
 [Unresolved disagreements, admitted limitations, claims without evidence,
